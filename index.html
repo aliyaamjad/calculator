@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Calculator</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            transition: background 0.3s;
+        }
+
+        .calculator {
+            background: white;
+            width: 340px;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: background 0.3s;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 0;
+        }
+
+        #display {
+            width: 100%;
+            height: 60px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 25px;
+            text-align: right;
+            background: white;
+            color: #222;
+        }
+
+        .theme-button {
+            width: 100%;
+            height: 40px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #333;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .buttons button {
+            height: 55px;
+            border: none;
+            border-radius: 10px;
+            background: #e8e8e8;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .buttons button:hover {
+            opacity: 0.8;
+        }
+
+        .operator {
+            background: #667eea !important;
+            color: white;
+        }
+
+        .equal {
+            background: #28a745 !important;
+            color: white;
+        }
+
+        .clear {
+            background: #dc3545 !important;
+            color: white;
+        }
+
+        .history {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f3f3f3;
+            border-radius: 10px;
+        }
+
+        .history h2 {
+            margin: 0 0 10px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        #historyList {
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        #historyList p {
+            margin: 6px 0;
+            padding: 5px;
+            background: white;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .clear-history {
+            width: 100%;
+            height: 35px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #dc3545;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* DARK MODE */
+
+        body.dark {
+            background: #121212;
+        }
+
+        body.dark .calculator {
+            background: #1e1e1e;
+        }
+
+        body.dark h1 {
+            color: white;
+        }
+
+        body.dark #display {
+            background: #333;
+            color: white;
+            border-color: #555;
+        }
+
+        body.dark .theme-button {
+            background: white;
+            color: #222;
+        }
+
+        body.dark .buttons button {
+            background: #444;
+            color: white;
+        }
+
+        body.dark .operator {
+            background: #667eea !important;
+        }
+
+        body.dark .equal {
+            background: #28a745 !important;
+        }
+
+        body.dark .clear {
+            background: #dc3545 !important;
+        }
+
+        body.dark .history {
+            background: #333;
+        }
+
+        body.dark .history h2 {
+            color: white;
+        }
+
+        body.dark #historyList p {
+            background: #444;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="calculator">
+
+    <h1>My Calculator</h1>
+
+    <button class="theme-button" onclick="toggleDarkMode()">
+        🌙 Dark Mode
+    </button>
+
+    <input type="text" id="display" readonly>
+
+    <div class="buttons">
+
+        <button class="clear" onclick="clearDisplay()">C</button>
+        <button onclick="deleteLast()">⌫</button>
+        <button class="operator" onclick="addToDisplay('%')">%</button>
+        <button class="operator" onclick="addToDisplay('/')">÷</button>
+
+        <button onclick="addToDisplay('7')">7</button>
+        <button onclick="addToDisplay('8')">8</button>
+        <button onclick="addToDisplay('9')">9</button>
+        <button class="operator" onclick="addToDisplay('*')">×</button>
+
+        <button onclick="addToDisplay('4')">4</button>
+        <button onclick="addToDisplay('5')">5</button>
+        <button onclick="addToDisplay('6')">6</button>
+        <button class="operator" onclick="addToDisplay('-')">−</button>
+
+        <button onclick="addToDisplay('1')">1</button>
+        <button onclick="addToDisplay('2')">2</button>
+        <button onclick="addToDisplay('3')">3</button>
+        <button class="operator" onclick="addToDisplay('+')">+</button>
+
+        <button onclick="addToDisplay('0')">0</button>
+        <button onclick="addToDisplay('.')">.</button>
+        <button class="equal" onclick="calculate()">=</button>
+
+    </div>
+
+    <div class="history">
+
+        <h2>🕘 Calculation History</h2>
+
+        <div id="historyList"></div>
+
+        <button class="clear-history" onclick="clearHistory()">
+            Clear History
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+function addToDisplay(value) {
+    document.getElementById("display").value += value;
+}
+
+function clearDisplay() {
+    document.getElementById("display").value = "";
+}
+
+function deleteLast() {
+    const display = document.getElementById("display");
+    display.value = display.value.slice(0, -1);
+}
+
+function calculate() {
+
+    const display = document.getElementById("display");
+    const expression = display.value;
+
+    if (expression === "") {
+        return;
+    }
+
+    try {
+
+        const result = eval(expression);
+
+        display.value = result;
+
+        addToHistory(expression, result);
+
+    } catch {
+
+        display.value = "Error";
+
+    }
+}
+
+function addToHistory(expression, result) {
+
+    const historyList = document.getElementById("historyList");
+
+    const item = document.createElement("p");
+
+    item.textContent = expression + " = " + result;
+
+    historyList.prepend(item);
+}
+
+function clearHistory() {
+
+    document.getElementById("historyList").innerHTML = "";
+
+}
+
+function toggleDarkMode() {
+
+    document.body.classList.toggle("dark");
+
+}
+
+document.addEventListener("keydown", function(event) {
+
+    const key = event.key;
+
+    if (
+        (key >= "0" && key <= "9") ||
+        key === "+" ||
+        key === "-" ||
+        key === "*" ||
+        key === "/" ||
+        key === "." ||
+        key === "%"
+    ) {
+
+        addToDisplay(key);
+
+    } else if (key === "Enter") {
+
+        event.preventDefault();
+        calculate();
+
+    } else if (key === "Backspace") {
+
+        deleteLast();
+
+    } else if (key === "Escape") {
+
+        clearDisplay();
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
